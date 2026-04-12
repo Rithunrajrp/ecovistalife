@@ -1,16 +1,56 @@
+import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Home } from "lucide-react";
+import { SEO_DEFAULT_DESCRIPTION, SEO_KEYWORDS, SITE_NAME, getSiteUrl } from "@/lib/seo";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+function excerpt(text: string | null | undefined, max = 155): string {
+  if (!text?.trim()) return SEO_DEFAULT_DESCRIPTION;
+  const one = text.replace(/\s+/g, " ").trim();
+  if (one.length <= max) return one;
+  return `${one.slice(0, max - 1)}…`;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const { data: blog } = await supabase.from("blogs").select("title").eq("id", id).single();
+  const { data: blog } = await supabase
+    .from("blogs")
+    .select("title, content, image")
+    .eq("id", id)
+    .single();
+
+  if (!blog?.title) {
+    return { title: `Blog | ${SITE_NAME}`, robots: { index: false, follow: false } };
+  }
+
+  const description = excerpt(blog.content);
+  const url = `${getSiteUrl()}/blogs/${id}`;
+  const images = blog.image ? [{ url: blog.image }] : undefined;
+
   return {
-    title: blog ? `${blog.title} | EcoVistaLife` : "Blog | EcoVistaLife",
+    title: blog.title,
+    description,
+    keywords: [...SEO_KEYWORDS, "EcoVistaLife blog", "sustainable construction news", "green building India"],
+    alternates: { canonical: `/blogs/${id}` },
+    openGraph: {
+      type: "article",
+      url,
+      title: blog.title,
+      description,
+      siteName: SITE_NAME,
+      locale: "en_IN",
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: blog.title,
+      description,
+      images: blog.image ? [blog.image] : undefined,
+    },
   };
 }
 

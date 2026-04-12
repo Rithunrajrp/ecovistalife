@@ -6,6 +6,8 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { getPages } from "@/lib/cms";
+import { buildRootMetadata } from "@/lib/seo";
+import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -18,10 +20,7 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "EcoVistaLife - Premium Construction & Real Estate",
-  description: "EcoVistaLife offers premium, sustainable, and luxurious real estate properties. Book a site visit today.",
-};
+export const metadata: Metadata = buildRootMetadata();
 
 export default async function RootLayout({
   children,
@@ -50,10 +49,11 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${montserrat.variable} ${poppins.variable} h-full antialiased scroll-smooth`}
     >
       <body className="min-h-full flex flex-col pt-0">
+        {!isApp && <SeoJsonLd />}
         {!isApp && <Navbar links={navLinks} />}
         <main className="flex-grow">{children}</main>
         {!isApp && <FloatingWhatsApp />}
