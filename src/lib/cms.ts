@@ -414,3 +414,86 @@ export async function submitForm(formId: string, formData: Record<string, any>) 
     .insert([{ form_id: formId, data: formData }]);
   if (error) throw error;
 }
+
+// ============================================
+// Media library (folders + assets)
+// ============================================
+
+export type MediaFolderRow = {
+  id: string;
+  parent_id: string | null;
+  name: string;
+  created_at: string;
+};
+
+export type MediaAssetRow = {
+  id: string;
+  folder_id: string;
+  name: string;
+  storage_path: string;
+  public_url: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  kind: "image" | "video" | "document";
+  created_at: string;
+};
+
+export async function getMediaFolders(): Promise<MediaFolderRow[]> {
+  const { data, error } = await supabase.from("media_folders").select("*").order("name", { ascending: true });
+  if (error) {
+    if (process.env.NODE_ENV === "development") console.warn("[cms] getMediaFolders:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createMediaFolder(name: string, parentId: string | null): Promise<MediaFolderRow> {
+  const { data, error } = await supabase
+    .from("media_folders")
+    .insert([{ name: name.trim(), parent_id: parentId }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data as MediaFolderRow;
+}
+
+export async function deleteMediaFolder(id: string): Promise<void> {
+  const { error } = await supabase.from("media_folders").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function getMediaAssetsForFolder(folderId: string): Promise<MediaAssetRow[]> {
+  const { data, error } = await supabase
+    .from("media_assets")
+    .select("*")
+    .eq("folder_id", folderId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getMediaAssetsInFolders(folderIds: string[]): Promise<MediaAssetRow[]> {
+  if (folderIds.length === 0) return [];
+  const { data, error } = await supabase.from("media_assets").select("*").in("folder_id", folderIds);
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createMediaAsset(row: {
+  folder_id: string;
+  name: string;
+  storage_path: string;
+  public_url: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  kind: "image" | "video" | "document";
+}): Promise<MediaAssetRow> {
+  const { data, error } = await supabase.from("media_assets").insert([row]).select().single();
+  if (error) throw error;
+  return data as MediaAssetRow;
+}
+
+export async function deleteMediaAsset(id: string): Promise<void> {
+  const { error } = await supabase.from("media_assets").delete().eq("id", id);
+  if (error) throw error;
+}

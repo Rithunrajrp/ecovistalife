@@ -23,6 +23,7 @@ import Link from "next/link";
 import { toast } from "@/components/ui/Toaster";
 import { AdminBlockRenderer } from "@/components/blocks/AdminBlockRenderer";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
 import { CompositionEditor } from "@/components/admin/CompositionEditor";
 import { defaultCompositionContent } from "@/lib/composition";
 import { ANIMATION_TYPES, EASING_OPTIONS } from "@/lib/animations";
@@ -611,6 +612,7 @@ export function VisualBuilder({ entityId, entityType }: { entityId: string; enti
 export function ContentPanel({ block, onChange }: { block: any; onChange: (id: string, key: string, val: any) => void }) {
   const c = block.content || {};
   const id = block.id;
+  const [galleryPickerOpen, setGalleryPickerOpen] = useState(false);
 
   const inputClass = "w-full bg-[#0B0F14] border border-[#1f2937] text-white px-3 py-2 rounded-lg focus:outline-none focus:border-[#D4AF37] text-xs transition-all resize-none";
   const labelClass = "block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
@@ -652,9 +654,28 @@ export function ContentPanel({ block, onChange }: { block: any; onChange: (id: s
   const galleryImages = () => {
     const images: string[] = c.images || [];
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         <label className={labelClass}>Image URLs (one per line)</label>
         <textarea rows={5} value={images.join("\n")} onChange={(e) => onChange(id, "images", e.target.value.split("\n").filter(Boolean))} className={inputClass + " font-mono"} placeholder="https://example.com/img.jpg" />
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => setGalleryPickerOpen(true)}
+            className="text-[10px] font-bold text-[#D4AF37] hover:text-[#E5C354] tracking-wide"
+          >
+            + Add from library
+          </button>
+        </div>
+        <MediaLibraryPicker
+          open={galleryPickerOpen}
+          onOpenChange={setGalleryPickerOpen}
+          filter="image"
+          title="Add gallery image"
+          onSelect={(url) => {
+            onChange(id, "images", [...images, url]);
+            setGalleryPickerOpen(false);
+          }}
+        />
       </div>
     );
   };
@@ -675,7 +696,10 @@ export function ContentPanel({ block, onChange }: { block: any; onChange: (id: s
       {block.type === "hero" && (<>
         {field("title", "Title")}
         {field("subtitle", "Subtitle", "textarea")}
-        {field("image", "Background Image URL", "url")}
+        <div className="space-y-1">
+          <span className={labelClass}>Background image</span>
+          <ImageUploadField value={c.image || ""} onChange={(url) => onChange(id, "image", url)} />
+        </div>
         {field("buttonText", "Button Label")}
         {field("buttonLink", "Button Link", "url")}
       </>)}
@@ -686,13 +710,19 @@ export function ContentPanel({ block, onChange }: { block: any; onChange: (id: s
       </>)}
       {block.type === "image" && (<>
         {field("heading", "Heading (optional)")}
-        {field("image", "Image URL", "url")}
+        <div className="space-y-1">
+          <span className={labelClass}>Image</span>
+          <ImageUploadField value={c.image || ""} onChange={(url) => onChange(id, "image", url)} />
+        </div>
         {field("caption", "Caption")}
       </>)}
       {block.type === "image_text" && (<>
         {field("heading", "Heading")}
         {field("body", "Body Text", "textarea")}
-        {field("image", "Image URL", "url")}
+        <div className="space-y-1">
+          <span className={labelClass}>Image</span>
+          <ImageUploadField value={c.image || ""} onChange={(url) => onChange(id, "image", url)} />
+        </div>
         {field("imagePosition", "Image Position", "select", ["left", "right"])}
       </>)}
       {block.type === "gallery" && (<>

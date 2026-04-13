@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, X, Loader2, ImageIcon } from "lucide-react";
+import { Upload, X, Loader2, ImageIcon, Library } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { MediaLibraryPicker, type MediaLibraryFilter } from "@/components/admin/MediaLibraryPicker";
 
 interface ImageUploadFieldProps {
   value: string;
@@ -10,6 +11,10 @@ interface ImageUploadFieldProps {
   label?: string;
   placeholder?: string;
   bucket?: string;
+  /** When true, show a button to pick a file already uploaded under Admin → Documents. */
+  showMediaLibrary?: boolean;
+  /** Restrict library picker to image / video / document / all. */
+  mediaLibraryFilter?: MediaLibraryFilter;
 }
 
 export function ImageUploadField({
@@ -18,11 +23,14 @@ export function ImageUploadField({
   label = "Image",
   placeholder = "https://example.com/image.jpg",
   bucket = "public-images",
+  showMediaLibrary = true,
+  mediaLibraryFilter = "image",
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const upload = async (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -132,14 +140,24 @@ export function ImageUploadField({
       )}
 
       {/* URL input — always visible so user can paste a URL directly */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={inputClass + " flex-1"}
+          className={inputClass + " flex-1 min-w-[120px]"}
           placeholder={placeholder}
         />
+        {showMediaLibrary && (
+          <button
+            type="button"
+            onClick={() => setLibraryOpen(true)}
+            className="flex items-center gap-1.5 bg-[#1f2937] hover:bg-[#263040] text-gray-300 hover:text-white px-3 py-2 rounded-lg text-[10px] font-bold tracking-wide transition-all shrink-0"
+          >
+            <Library size={11} />
+            Library
+          </button>
+        )}
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -154,6 +172,16 @@ export function ImageUploadField({
           Upload
         </button>
       </div>
+
+      {showMediaLibrary && (
+        <MediaLibraryPicker
+          open={libraryOpen}
+          onOpenChange={setLibraryOpen}
+          filter={mediaLibraryFilter}
+          onSelect={onChange}
+          title="Pick from library"
+        />
+      )}
 
       {error && (
         <p className="text-[10px] text-red-400 font-medium">{error}</p>

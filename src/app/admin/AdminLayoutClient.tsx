@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, FolderKanban, FileText, MessageSquare, Settings, LogOut, Loader2, Menu, X, HelpCircle, Layers, ClipboardList, Blocks } from "lucide-react";
+import { LayoutDashboard, FolderKanban, FileText, MessageSquare, Settings, LogOut, Loader2, Menu, X, HelpCircle, Layers, ClipboardList, Blocks, Library } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Toaster } from "@/components/ui/Toaster";
 
@@ -88,6 +88,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Blocks", href: "/admin/blocks", icon: Blocks },
     { name: "Pages", href: "/admin/pages", icon: Layers },
+    { name: "Documents", href: "/admin/documents", icon: Library },
     { name: "Forms", href: "/admin/forms", icon: ClipboardList },
     { name: "Projects", href: "/admin/projects", icon: FolderKanban },
     { name: "Blogs", href: "/admin/blogs", icon: FileText },
