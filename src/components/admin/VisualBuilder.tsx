@@ -5,6 +5,8 @@ import {
   getBlocksForPage,
   getBlockTemplateById,
   getBlocksForTemplate,
+  getProjectById,
+  getBlocksForProject,
   createBlock,
   updateBlock,
   deleteBlock,
@@ -90,7 +92,7 @@ export const DEFAULT_ANIMATION = {
 // --- Sidebar Panel Tabs ---
 type PanelTab = "content" | "style" | "animation";
 
-export function VisualBuilder({ entityId, entityType }: { entityId: string; entityType: "page" | "template" }) {
+export function VisualBuilder({ entityId, entityType }: { entityId: string; entityType: "page" | "template" | "project" }) {
   const [page, setPage] = useState<any>(null);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,6 +123,11 @@ export function VisualBuilder({ entityId, entityType }: { entityId: string; enti
         [entityData, blocksData] = await Promise.all([
           getPageById(entityId),
           getBlocksForPage(entityId),
+        ]);
+      } else if (entityType === "project") {
+        [entityData, blocksData] = await Promise.all([
+          getProjectById(entityId),
+          getBlocksForProject(entityId),
         ]);
       } else {
         [entityData, blocksData] = await Promise.all([
@@ -163,7 +170,8 @@ export function VisualBuilder({ entityId, entityType }: { entityId: string; enti
     try {
       const pId = entityType === "page" ? entityId : null;
       const tId = entityType === "template" ? entityId : null;
-      const raw = await createBlock(pId, type, sortOrder, content, DEFAULT_SETTINGS, DEFAULT_ANIMATION, tId);
+      const projId = entityType === "project" ? entityId : null;
+      const raw = await createBlock(pId, type, sortOrder, content, DEFAULT_SETTINGS, DEFAULT_ANIMATION, tId, projId);
       const newBlock = {
         ...raw,
         settings: raw.settings ?? DEFAULT_SETTINGS,
@@ -195,7 +203,8 @@ export function VisualBuilder({ entityId, entityType }: { entityId: string; enti
         lib.animation_config && typeof lib.animation_config === "object" ? { ...lib.animation_config } : DEFAULT_ANIMATION;
       const pId = entityType === "page" ? entityId : null;
       const tId = entityType === "template" ? entityId : null;
-      const raw = await createBlock(pId, lib.type, sortOrder, content, settings, anim, tId);
+      const projId = entityType === "project" ? entityId : null;
+      const raw = await createBlock(pId, lib.type, sortOrder, content, settings, anim, tId, projId);
       const newBlock = {
         ...raw,
         settings: raw.settings ?? settings,
@@ -292,12 +301,13 @@ export function VisualBuilder({ entityId, entityType }: { entityId: string; enti
       {/* ── Top Bar ── */}
       <header className="flex items-center justify-between bg-[#111827] px-5 h-12 border-b border-[#1f2937] shrink-0 z-30">
         <div className="flex items-center gap-3">
-          <Link href={entityType === "page" ? "/admin/pages" : "/admin/templates"} className="p-1.5 text-gray-500 hover:text-white rounded-md hover:bg-[#1f2937] transition-all">
+          <Link href={entityType === "page" ? "/admin/pages" : entityType === "project" ? "/admin/projects" : "/admin/templates"} className="p-1.5 text-gray-500 hover:text-white rounded-md hover:bg-[#1f2937] transition-all">
             <ArrowLeft size={17} />
           </Link>
           <div className="w-px h-5 bg-[#1f2937]" />
           <span className="text-sm font-bold text-white">{page?.title || page?.name || "Editor"}</span>
           {entityType === "page" && <span className="text-[11px] font-mono text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-0.5 rounded">/{page?.slug}</span>}
+          {entityType === "project" && <span className="text-[11px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">PROJECT</span>}
           {entityType === "template" && <span className="text-[11px] font-mono text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">TEMPLATE</span>}
         </div>
         <button

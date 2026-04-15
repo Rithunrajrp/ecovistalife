@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, FolderKanban, FileText, MessageSquare, Settings, LogOut, Loader2, Menu, X, HelpCircle, Layers, ClipboardList, Blocks, Library } from "lucide-react";
+import { LayoutDashboard, FolderKanban, FileText, MessageSquare, Settings, LogOut, Loader2, Menu, X, HelpCircle, Layers, ClipboardList, Blocks, Library, Quote } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Toaster } from "@/components/ui/Toaster";
 
@@ -18,12 +18,16 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     pathname?.startsWith("/admin/pages/") &&
     pathParts.length >= 3 &&
     pathParts[2] !== undefined;
+  const isProjectBuilder =
+    pathname?.startsWith("/admin/projects/") &&
+    pathParts.length >= 3 &&
+    pathParts[2] !== undefined;
   const isSiteFooterEditor = pathname === "/admin/blocks/footer";
   const isLibraryBlockEditor =
     pathname?.startsWith("/admin/blocks/library/") &&
     pathParts.length === 4 &&
     pathParts[3] !== "new";
-  const isFullscreenEditor = isPageBuilder || isSiteFooterEditor || isLibraryBlockEditor;
+  const isFullscreenEditor = isPageBuilder || isProjectBuilder || isSiteFooterEditor || isLibraryBlockEditor;
 
   const isLoginPage = pathname === "/admin/login" || pathname === "/login";
 
@@ -92,6 +96,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     { name: "Forms", href: "/admin/forms", icon: ClipboardList },
     { name: "Projects", href: "/admin/projects", icon: FolderKanban },
     { name: "Blogs", href: "/admin/blogs", icon: FileText },
+    { name: "Testimonials", href: "/admin/testimonials", icon: Quote },
     { name: "FAQs", href: "/admin/faqs", icon: HelpCircle },
     { name: "Enquiries", href: "/admin/enquiries", icon: MessageSquare },
     { name: "Settings", href: "/admin/settings", icon: Settings },

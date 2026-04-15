@@ -99,7 +99,6 @@ export default function AdminPages() {
                     </td>
                     <td className="p-6 text-right">
                       <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <a href={`/${page.slug}`} target="_blank" className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-emerald-400 hover:border-emerald-500/30 transition-all shadow-sm" title="View live page"><Globe size={16} /></a>
                         <Link href={`/admin/pages/${page.id}`} className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-white hover:border-gray-600 transition-all shadow-sm" title="Edit blocks"><Edit2 size={16} /></Link>
                         <button onClick={() => handleDelete(page.id)} className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-red-400 hover:border-red-500/30 transition-all shadow-sm"><Trash2 size={16} /></button>
                       </div>

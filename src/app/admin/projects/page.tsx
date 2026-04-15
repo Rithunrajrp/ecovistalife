@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { uploadImage } from "@/lib/storage";
-import { Edit2, Trash2, Plus, Image as ImageIcon, MapPin } from "lucide-react";
+import { Edit2, Trash2, Plus, Image as ImageIcon, MapPin, Layout } from "lucide-react";
 import { toast } from "@/components/ui/Toaster";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -166,6 +167,7 @@ export default function AdminProjects() {
                     <td className="p-6 font-semibold text-gray-300">{project.price}</td>
                     <td className="p-6 text-right">
                       <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Link href={`/admin/projects/${project.id}`} className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-emerald-400 hover:border-emerald-500/30 transition-all shadow-sm" title="Visual page builder"><Layout size={16} /></Link>
                         <button onClick={() => handleEdit(project)} className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-white hover:border-gray-600 transition-all shadow-sm"><Edit2 size={16} /></button>
                         <button onClick={() => handleDelete(project.id)} className="p-2.5 text-gray-400 bg-[#0B0F14] border border-gray-800 rounded-xl hover:text-red-400 hover:border-red-500/30 transition-all shadow-sm"><Trash2 size={16} /></button>
                       </div>

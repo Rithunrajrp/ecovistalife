@@ -123,6 +123,26 @@ export async function getBlocksForTemplate(templateId: string) {
   return data || [];
 }
 
+export async function getProjectById(id: string) {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) return null;
+  return data;
+}
+
+export async function getBlocksForProject(projectId: string) {
+  const { data, error } = await supabase
+    .from("blocks")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
 export async function createBlock(
   pageId: string | null,
   type: string,
@@ -130,7 +150,8 @@ export async function createBlock(
   content: Record<string, any> = {},
   settings: Record<string, any> = {},
   animationConfig: Record<string, any> = {},
-  templateId: string | null = null
+  templateId: string | null = null,
+  projectId: string | null = null
 ) {
   const full: Record<string, unknown> = {
     type,
@@ -141,6 +162,7 @@ export async function createBlock(
   };
   if (pageId != null) full.page_id = pageId;
   if (templateId != null) full.template_id = templateId;
+  if (projectId != null) full.project_id = projectId;
 
   let { data, error } = await supabase.from("blocks").insert([full]).select().single();
 
@@ -153,6 +175,7 @@ export async function createBlock(
     };
     if (pageId != null) minimal.page_id = pageId;
     if (templateId != null) minimal.template_id = templateId;
+    if (projectId != null) minimal.project_id = projectId;
     const second = await supabase.from("blocks").insert([minimal]).select().single();
     data = second.data;
     error = second.error;
