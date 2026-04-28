@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-export type AnimationType = "fade" | "slideUp" | "slideDown" | "slideLeft" | "slideRight" | "scale" | "none";
+export type AnimationType = "fade" | "slideUp" | "slideDown" | "slideLeft" | "slideRight" | "scale" | "reveal" | "none";
 export type AnimationTrigger = "scroll" | "load";
 
 export interface AnimationConfig {
@@ -62,6 +62,9 @@ export function useBlockAnimation(config: AnimationConfig) {
           fromVars.opacity = 0;
           fromVars.scale = 0.85;
           break;
+        case "reveal":
+          fromVars.clipPath = "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)";
+          break;
       }
 
       ctx = gsap.context(() => {
@@ -96,6 +99,7 @@ export const ANIMATION_TYPES: { value: AnimationType | "none"; label: string }[]
   { value: "slideLeft", label: "Slide In Left" },
   { value: "slideRight", label: "Slide In Right" },
   { value: "scale", label: "Scale In" },
+  { value: "reveal", label: "Mask Reveal" },
 ];
 
 export const EASING_OPTIONS = [

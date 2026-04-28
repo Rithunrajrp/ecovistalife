@@ -1,5 +1,7 @@
 import { ProjectCard } from "@/components/ProjectCard";
 import { supabase } from "@/lib/supabase";
+import { StaggerGrid } from "../ui/StaggerGrid";
+import { SplitTextReveal } from "../ui/SplitTextReveal";
 
 export async function ProjectsGridBlock({ content }: { content: any }) {
   const heading = content.heading || "Our Portfolio";
@@ -26,15 +28,17 @@ export async function ProjectsGridBlock({ content }: { content: any }) {
         {heading && (
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
             <div className="max-w-2xl">
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0F3D3E]">{heading}</h2>
+              <SplitTextReveal as="h2" className="text-3xl md:text-5xl font-heading font-bold text-[#0F3D3E]">{heading}</SplitTextReveal>
             </div>
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsList.map((project: any) => (
-            <ProjectCard key={project.id} project={project} />
+            <div key={project.id}>
+              <ProjectCard project={project} />
+            </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

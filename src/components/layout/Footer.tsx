@@ -9,14 +9,14 @@ export async function Footer({ pages = [] }: { pages?: { name: string; href: str
   const base = (site?.content || {}) as Record<string, any>;
 
   const content = {
-    brandName: base.brandName ?? settings.company_name ?? "EcoVistaLife",
+    brandName: settings.company_name || base.brandName || "EcoVistaLife",
     tagline:
-      base.tagline ??
-      settings.footer_tagline ??
+      settings.footer_tagline ||
+      base.tagline ||
       "Premium, sustainable, and luxurious real estate properties designed for the modern lifestyle.",
-    address: base.address ?? settings.address ?? "123 Eco Blvd, Mumbai, Maharashtra, India 400001",
-    phone: base.phone ?? settings.phone_number ?? "+91 98765 43210",
-    email: base.email ?? settings.contact_email ?? "info@ecovistalife.in",
+    address: settings.address || base.address || "123 Eco Blvd, Mumbai, Maharashtra, India 400001",
+    phone: settings.phone_number || base.phone || "+91 98765 43210",
+    email: settings.contact_email || base.email || "info@ecovistalife.in",
     socialLinks: base.socialLinks ?? {
       facebook: settings.social_facebook || "#",
       instagram: settings.social_instagram || "#",

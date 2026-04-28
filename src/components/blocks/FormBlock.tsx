@@ -58,6 +58,18 @@ export function FormBlock({ content, embedded }: { content: any; embedded?: bool
                   onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0F3D3E] focus:border-transparent transition-all"
                 />
+              ) : field.type === "select" ? (
+                <select
+                  required={field.required}
+                  value={formData[field.name] || ""}
+                  onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0F3D3E] focus:border-transparent transition-all"
+                >
+                  <option value="">Select an option...</option>
+                  {(field.options || []).map((opt: any) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type={field.type === "phone" ? "tel" : field.type}
@@ -99,6 +111,18 @@ export function FormBlock({ content, embedded }: { content: any; embedded?: bool
                   onChange={e => setFormData({ ...formData, [field.name]: e.target.value })}
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0F3D3E] focus:border-transparent transition-all"
                 />
+              ) : field.type === "select" ? (
+                <select
+                  required={field.required}
+                  value={formData[field.name] || ""}
+                  onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0F3D3E] focus:border-transparent transition-all"
+                >
+                  <option value="">Select an option...</option>
+                  {(field.options || []).map((opt: any) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type={field.type === "phone" ? "tel" : field.type}

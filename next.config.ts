@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "zxzsmozlaehxdicppuuk.supabase.co",
       },
+      {
+        protocol: "https",
+        hostname: "ecovistalife.in",
+      },
+      {
+        protocol: "http",
+        hostname: "ecovistalife.in",
+      },
     ],
   },
 };

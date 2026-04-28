@@ -41,6 +41,7 @@ function MockContactInfoBlock({ content }: { content: any }) {
   );
 }
 
+
 const ADMIN_BLOCK_MAP: Record<string, React.ComponentType<{ content: any }>> = {
   hero: HeroBlock,
   text: TextBlock,

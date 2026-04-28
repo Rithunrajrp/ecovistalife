@@ -6,55 +6,49 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
 export function Navbar({ links = [] }: { links?: { name: string; href: string }[] }) {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [logoError, setLogoError] = useState(false);
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm py-4"
-          : "bg-transparent py-4 md:py-6"
-      )}
-    >
-      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-heading font-bold text-[#0F3D3E] z-50">
-          EcoVista<span className="text-[#D4AF37]">Life</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm transition-all duration-300">
+      <div className="container mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="z-50 shrink-0 flex items-center gap-2">
+          {!logoError ? (
+            <img 
+              src="/logo.png" 
+              alt="EcoVistaLife Logo" 
+              className="h-10 md:h-12 w-auto object-contain"
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <span className="text-2xl md:text-3xl font-heading font-bold text-[#0F3D3E] tracking-tight">
+              EcoVista<span className="text-[#D4AF37]">Life</span>
+            </span>
+          )}
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8 xl:gap-10">
           {links.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className={cn(
-                "font-medium hover:text-[#D4AF37] transition-colors",
-                isScrolled ? "text-gray-800" : "text-white md:text-gray-800"
-              )}
+              className="text-sm xl:text-base font-semibold text-gray-700 hover:text-[#D4AF37] transition-colors"
             >
               {link.name}
             </Link>
           ))}
-          <Button variant="secondary" size="md">Book a Site Visit</Button>
+          <Link href="/book-visit">
+            <Button variant="secondary" size="md" className="font-semibold px-6 shadow-sm hover:shadow-md transition-shadow">
+              Book a Site Visit
+            </Button>
+          </Link>
         </nav>
 
         {/* Mobile Toggle */}
         <button
-          className={cn(
-            "md:hidden z-50 transition-colors",
-            isScrolled || isOpen ? "text-[#0F3D3E]" : "text-[#0F3D3E]" 
-            // In a real app we might want white on dark hero, but we'll stick to primary for simplicity
-          )}
+          className="md:hidden z-50 text-[#0F3D3E] p-1 focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -75,9 +69,11 @@ export function Navbar({ links = [] }: { links?: { name: string; href: string }[
                 {link.name}
               </Link>
             ))}
-            <Button variant="secondary" size="lg" className="mt-4">
-              Book a Site Visit
-            </Button>
+            <Link href="/book-visit" onClick={() => setIsOpen(false)}>
+              <Button variant="secondary" size="lg" className="mt-4">
+                Book a Site Visit
+              </Button>
+            </Link>
           </div>
         </div>
       )}
